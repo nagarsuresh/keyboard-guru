@@ -1,0 +1,49 @@
+# keyboard-guru snippets
+#
+# Copy this file to ~/.keyboard-guru.yaml and edit it. Restart keyboard-guru
+# after changing it (run `keyboard-guru --check` to validate first).
+#
+# Each snippet has a `trigger` (what you type) and an `expand` (what replaces it).
+# The typed trigger is erased with backspaces first, then `expand` is played:
+#
+#   plain text       typed as-is ("\n" in double quotes presses Enter)
+#   {TAB} {ENTER} {BACKSPACE} {DELETE} {ESC} {SPACE}
+#   {UP} {DOWN} {LEFT} {RIGHT} {HOME} {END} {PAGEUP} {PAGEDOWN} {F1}..{F12}
+#   {TAB 3}          press a key 3 times
+#   {CMD+A}          key combos: CMD, CTRL, ALT (= OPTION), SHIFT
+#   {DELAY 0.5}      wait half a second (give a page time to react)
+#   {{ and }}        a literal { or }
+#
+# Tip: start triggers with a character you rarely type, like ";", so they
+# don't fire by accident.
+
+settings:
+  key_delay: 0.01 # seconds between keystrokes; raise to 0.03 if an app drops keys
+
+snippets:
+  # Plain text completion.
+  - trigger: ";sig"
+    expand: "Best regards,\nJane Doe"
+
+  # Fill a form: type, Tab to the next field, type, ..., then press Enter.
+  # A list is joined into one string, which keeps long sequences readable.
+  - trigger: ";addr"
+    expand:
+      - "Jane Doe{TAB}"
+      - "221B Baker Street{TAB}"
+      - "London{TAB}"
+      - "NW1 6XE{TAB}"
+      - "{DELAY 0.2}{ENTER}"
+
+  # Replace whatever is in the current field: select all, erase, type.
+  - trigger: ";email"
+    expand: "{CMD+A}{BACKSPACE}jane.doe@example.com{TAB}"
+
+  # Keep the trigger, then adjust it: "jane@@" becomes "jane@gmail.com".
+  - trigger: "@@"
+    delete_trigger: false
+    expand: "{BACKSPACE}gmail.com"
+
+  # Put the cursor between the brackets.
+  - trigger: ";()"
+    expand: "(){LEFT}"

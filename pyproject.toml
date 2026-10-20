@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "keyboard-guru"
+version = "0.1.0"
+description = "A tiny Keyboard Maestro-style text expander: type a trigger, get text and keystrokes."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "pynput>=1.8",
+    "PyYAML>=5.4",
+]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[project.scripts]
+keyboard-guru = "keyboard_guru.cli:main"
+
+[tool.setuptools]
+packages = ["keyboard_guru"]
