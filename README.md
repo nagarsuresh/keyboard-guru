@@ -29,7 +29,47 @@ both **Accessibility** and **Input Monitoring**. Then quit and reopen the
 terminal and run `keyboard-guru` again.
 
 Leave it running in that terminal window and type `;sig` in any text field to try it.
-Press Ctrl+C to stop.
+Press Ctrl+C to stop. To keep it running without a Terminal window, see
+[Running in the background](#running-in-the-background).
+
+## Where it works
+
+keyboard-guru watches the keyboard for the whole Mac, not for one app, so
+triggers work wherever you type: Chrome (web pages and the address bar),
+Safari, Gmail, Slack, Notes, VS Code and so on. The exceptions:
+
+- **Password fields.** While a password field has focus, macOS hides
+  keystrokes from tools like this (Secure Input), so triggers don't fire
+  there. Some password managers and banking apps turn Secure Input on while
+  they are open.
+- **Forms that react to each field.** If a web page loads something after you
+  Tab (an address lookup, say), it can drop keys. Add `{DELAY 0.3}` after that
+  `{TAB}`, or raise `key_delay`.
+
+## Running in the background
+
+keyboard-guru keeps running as long as the Terminal window you started it from
+stays open. That Terminal doesn't have to be the active app: minimise it and
+work in Chrome as usual.
+
+To keep it running after you close the Terminal window, start it with `nohup`
+from the keyboard-guru folder:
+
+```sh
+cd keyboard-guru
+nohup .venv/bin/keyboard-guru > ~/keyboard-guru.log 2>&1 & disown
+```
+
+It then runs until you log out or restart the Mac, and each expansion is
+logged to `~/keyboard-guru.log`.
+
+```sh
+pgrep -fl bin/keyboard-guru   # is it running?
+pkill -f bin/keyboard-guru    # stop it
+```
+
+After editing your snippets, stop it and start it again. Starting
+automatically at login isn't built in yet.
 
 ## Defining snippets
 
@@ -100,12 +140,10 @@ $ keyboard-guru --check
   `;ba`), the longer one wins. Start triggers with a rarely typed character
   such as `;` so they don't fire by accident.
 
-## Limitations
+## Other platforms
 
-- macOS blocks keyboard monitoring in password fields and some apps (Secure Input).
-- If an app drops keystrokes, raise `key_delay` or add `{DELAY …}` steps.
-- It also runs on Windows (use `{CTRL+…}` instead of `{CMD+…}`) and on Linux
-  under X11. Wayland isn't supported.
+keyboard-guru also runs on Windows (use `{CTRL+…}` instead of `{CMD+…}`) and
+on Linux under X11. Wayland isn't supported.
 
 ## Development
 
