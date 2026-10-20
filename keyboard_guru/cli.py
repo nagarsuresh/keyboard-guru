@@ -52,7 +52,8 @@ def main(argv: Optional[List[str]] = None) -> int:
     from .engine import run
 
     triggers = ", ".join(snippet.trigger for snippet in config.snippets)
-    print(f"keyboard-guru: watching for {triggers}. Press Ctrl+C to stop.")
+    # Flush so the line reaches a log file right away when run with nohup.
+    print(f"keyboard-guru: watching for {triggers}. Press Ctrl+C to stop.", flush=True)
     try:
         run(config)
     except KeyboardInterrupt:
