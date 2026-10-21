@@ -71,6 +71,47 @@ pkill -f bin/keyboard-guru    # stop it
 After editing your snippets, stop it and start it again. Starting
 automatically at login isn't built in yet.
 
+The included script validates the configuration, prevents duplicate instances,
+and records a PID and log under `.runtime/`:
+
+```sh
+./scripts/background.sh start
+./scripts/background.sh status
+./scripts/background.sh stop
+# Optional explicit configuration:
+./scripts/background.sh start /path/to/snippets.yaml
+```
+
+It uses `local/snippets.yaml` when present, otherwise `~/.keyboard-guru.yaml`.
+After editing snippets, run `stop` then `start`. macOS Accessibility and Input
+Monitoring permissions still apply. This starts the process for the current
+login session; it does not register a login item.
+
+## Importing Keyboard Maestro macros
+
+Convert an exported `.kmmacros` file without running any of its actions:
+
+```sh
+mkdir -p local
+.venv/bin/python -m keyboard_guru.import_km /path/to/export.kmmacros \
+  --output local/snippets.yaml --report local/import-report.json
+```
+
+The importer supports typed string triggers, text typed into the frontmost app,
+Tab/Enter/Space/Backspace/Delete/Escape/arrow keystrokes without modifiers, and
+fixed repeats. It preserves trigger deletion, escapes literal braces, and omits
+disabled actions. Multiple typed triggers become separate snippets.
+Keyboard Maestro typing escapes such as `\b`, `\t`, `\r`, `\n`, and `\e` become
+Backspace, Tab, Enter, and Escape key presses; `\\` stays a literal backslash.
+Unsupported actions cause the entire macro to be skipped, with a reason in the report;
+unsupported triggers are also reported. Hotkeys and system actions are not
+supported. Trigger matching follows keyboard-guru's case-sensitive suffix rules,
+and playback timing can differ from Keyboard Maestro.
+
+Both output files are created with owner-only permissions and refuse to overwrite
+existing files. `local/` and `.runtime/` are ignored by Git. The report includes
+names and triggers, but no expansion text. Review the report before starting.
+
 ## Defining snippets
 
 Snippets live in `~/.keyboard-guru.yaml`. You can pass a different file:
